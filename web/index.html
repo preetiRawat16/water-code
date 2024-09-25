@@ -23,18 +23,18 @@
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="watersoftware">
+  <meta name="apple-mobile-web-app-title" content="stock_market">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>watersoftware</title>
+  <title>stock_market</title>
   <link rel="manifest" href="manifest.json">
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    var serviceWorkerVersion = null;
+    const serviceWorkerVersion = null;
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
@@ -54,6 +54,30 @@
         }
       });
     });
+  
+  </script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyD0H6ZfFGAyBo7EVNcX3d5VKdazsheXRB4",
+      authDomain: "marketshare-f2228.firebaseapp.com",
+      projectId: "marketshare-f2228",
+      storageBucket: "marketshare-f2228.appspot.com",
+      messagingSenderId: "881595815573",
+      appId: "1:881595815573:web:9187806c670ce3f7f66d9c",
+      measurementId: "G-6SVCZ4L0VF"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
   </script>
 </body>
 </html>

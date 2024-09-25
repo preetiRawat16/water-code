@@ -1,6 +1,6 @@
 {
-    "name": "watersoftware",
-    "short_name": "watersoftware",
+    "name": "stock_market",
+    "short_name": "stock_market",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
