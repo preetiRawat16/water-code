@@ -76,19 +76,3 @@ class MyApp extends StatelessWidget {
 
 
 
-
-/*
-Container(
-                        color: Colors.black,
-                        height: 100,
-                        child:ClipRRect(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10),
-                                      ),
-                                      child: Image.asset(
-                                        "web/assets/stocklogo.png",
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                       ) */

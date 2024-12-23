@@ -6,8 +6,8 @@ import 'package:html/parser.dart' as html;
 class DataTableWidget extends StatefulWidget {
 
   final Function(Map<String, dynamic>) onRowSelected;
-
-  DataTableWidget({required this.onRowSelected});
+  final String filterQuery;
+  DataTableWidget({required this.onRowSelected, required this.filterQuery });
 
   @override
   _DataTableWidgetState createState() => _DataTableWidgetState();
@@ -50,68 +50,70 @@ class _DataTableWidgetState extends State<DataTableWidget> {
     final data = await _worksheet.values.allRows();
     final rows = <DataRow>[];
 
-    if (data.isNotEmpty) {
-      // Process the header row
-      final headerRow = data[0];
-      final updatedHeaderRow = [
-        headerRow[0],          // first column (unchanged)
-        headerRow.last,        // move last column to second position
-        ...headerRow.skip(1).take(headerRow.length - 2), // remaining columns, except last
-      ];
-
-      final headerCells = List.generate(
-        updatedHeaderRow.length,
-            (index) => DataCell(Text(updatedHeaderRow[index] ?? '')),
-      );
-      rows.add(DataRow(cells: headerCells));
-
-      // Process the remaining rows
-      final rowFutures = <Future<DataRow>>[];
-      for (var i = 1; i < data.length; i++) {
-        final row = data[i];
-        rowFutures.add(Future(() async {
-          // Move the last column to the second position
-          final updatedRow = [
-            row[0],             // first column (unchanged)
-            row.last,           // move last column to second position
-            ...row.skip(1).take(row.length - 2), // remaining columns, except last
-          ];
-
-          final cells = List.generate(
-            updatedRow.length,
-                (index) => DataCell(
-              Text(updatedRow[index] ?? ''),
-              onTap: () {
-                final rowData = {
-                  'detail': row.length > 0 ? row[0] : '',
-                  'cap': row.length > 1 ? row[1] : '',
-                  'type': row.length > 1 ? row[1] : '',
-                  'category': row.length > 2 ? row[2] : '',
-                  'rank': row.length > 3 ? row[3] : '',
-                  '2021': row.length > 4 ? row[4] : '',
-                  '2022': row.length > 5 ? row[5] : '',
-                  '2023': row.length > 6 ? row[6] : '',
-                };
-                widget.onRowSelected(rowData);
-              },
-            ),
-          );
-          return DataRow(cells: cells);
-        }));
-      }
-
-      rows.addAll(await Future.wait(rowFutures));
+    if (data.isEmpty) {
+      return rows; // Return an empty list if there's no data
     }
 
+    // Process the header row
+    final headerRow = data[0];
+    final modifiedHeaderRow = List<String>.from(headerRow);
+
+    if (headerRow.isNotEmpty) {
+      final lastColumnHeader = modifiedHeaderRow.removeLast();
+      modifiedHeaderRow.insert(3, lastColumnHeader); // Insert as the 4th column
+    }
+
+    rows.add(DataRow(
+      cells: modifiedHeaderRow.map((header) {
+        return DataCell(
+          Text(
+            header ?? '',
+            style: const TextStyle(fontSize: 12),
+            softWrap: true,
+            overflow: TextOverflow.clip,
+            textAlign: TextAlign.center,
+          ),
+        );
+      }).toList(),
+    ));
+
+    // Process the remaining rows
+    final rowFutures = data.skip(1).map((row) async {
+      final modifiedRow = List<String>.from(row);
+
+      if (row.isNotEmpty) {
+        final lastColumnValue = modifiedRow.removeLast();
+        modifiedRow.insert(3, lastColumnValue); // Insert as the 4th column
+      }
+
+      final cells = List<DataCell>.generate(modifiedRow.length, (index) {
+        final value = modifiedRow[index]?.toString() ?? '';
+        return DataCell(
+          Text(value),
+          onTap: () {
+            final rowData = {
+              'sno': modifiedRow.length > 12 ? modifiedRow[12] : '',
+              'detail': modifiedRow.length > 0 ? modifiedRow[0] : '',
+              'cap': modifiedRow.length > 1 ? modifiedRow[1] : '',
+              'type': modifiedRow.length > 1 ? modifiedRow[1] : '',
+              'category': modifiedRow.length > 2 ? modifiedRow[2] : '',
+              'rank': modifiedRow.length > 7 ? modifiedRow[7] : '',
+              '2021': modifiedRow.length > 8 ? modifiedRow[8] : '',
+              '2022': modifiedRow.length > 9 ? modifiedRow[9] : '',
+              '2023': modifiedRow.length > 10 ? modifiedRow[10] : '',
+              'list': modifiedRow.length > 11 ? modifiedRow[11] : '',
+            };
+            widget.onRowSelected(rowData);
+          },
+        );
+      });
+
+      return DataRow(cells: cells);
+    });
+
+    rows.addAll(await Future.wait(rowFutures));
     return rows;
   }
-
-
-
-
-
-
-
 
 
 
@@ -140,13 +142,15 @@ class _DataTableWidgetState extends State<DataTableWidget> {
         }
 
         return DataTable(
+          columnSpacing: 7.0,
           sortColumnIndex: _sortColumnIndex,
           sortAscending: _sortAscending,
           columns: _rows.first.cells.asMap().entries.map((entry) {
             final index = entry.key;
             final text = (entry.value.child as Text).data!;
             return DataColumn(
-              label: Text(text),
+              label: Container( width:80, child: Text(text,overflow: TextOverflow.visible,
+                softWrap: true,)),
               onSort: (int columnIndex, bool ascending) {
                 setState(() {
                   _sortColumnIndex = columnIndex;

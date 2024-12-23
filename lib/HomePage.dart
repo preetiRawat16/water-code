@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stock_market/DataEntry.dart';
+import 'package:stock_market/watchlist.dart';
 import 'MarketCap.dart';
 import 'MarketCategory.dart';
 import 'MarketType.dart';
@@ -11,7 +12,8 @@ class MyHomePage extends StatelessWidget {
   final List<String> suggestionlist;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -90,7 +92,7 @@ class MyHomePage extends StatelessWidget {
               ),
               Expanded(
                 child: DefaultTabController(
-                  length: 3, // Number of tabs
+                  length: 4, // Number of tabs
                   child: Column(
                     children: <Widget>[
                       TabBar(
@@ -100,7 +102,9 @@ class MyHomePage extends StatelessWidget {
                           Tab(text: 'Share-Market Cap'),
                           Tab(text: 'Share-Category'),
                           Tab(text: 'Share-Type'),
-                        ],
+                          Tab(text: 'Share-Watch'),
+
+                         ],
                       ),
                       Expanded(
                         child: TabBarView(
@@ -108,6 +112,8 @@ class MyHomePage extends StatelessWidget {
                             MarketCap(),
                             AddDocumentScreen(),
                             shareTypePage(),
+                            watchList(),
+
                             Center(
                               child: Text('Tab Content'),
                             ),

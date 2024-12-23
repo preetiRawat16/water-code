@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stock_market/shareList.dart';
 import 'HomePage.dart';
 import 'MarketCap.dart';
 import 'NewShareDetail.dart';
@@ -98,7 +99,7 @@ class DataEntry extends StatelessWidget {
                         indicatorColor: Color(0xFFa46e2d),
                         tabs: [
                           Tab(text: 'New Share Detail'),
-                          Tab(text: 'Existing Share Detail'),
+                          Tab(text: 'Watch list share'),
                           Tab(text: 'Buy/Sell Watchlist'),
                         ],
                       ),
@@ -106,7 +107,7 @@ class DataEntry extends StatelessWidget {
                         child: TabBarView(
                           children: [
                             NewShareDetail(sList:suggest),
-                            MarketCap(), 
+                            shareList(),
                             // MarketCategory(),
                             Center(
                               child: Text('Tab Content'),
