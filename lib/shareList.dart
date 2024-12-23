@@ -18,6 +18,7 @@ class shareList extends StatefulWidget {
 class _shareListState extends State<shareList> {
   List<String> documentNames = [];
   List<Map<String, String>> _rows = [];
+  List<Map<String, String>> _top109Stocks = []; // To hold data from 'Top 109 Stocks' sheet
   String _selectedFilter = '';
 
   // Google Sheets credentials
@@ -36,7 +37,8 @@ class _shareListState extends State<shareList> {
 }
 ''';
   static const _spreadsheetId = '1nNF82yIrisGX_UExSQs5IjiuSa9q1_5Xrm5iCn-CTj8';
-  static const _spreadsheetName = 'Spreadsheet Database';
+  static const _spreadsheetNameDatabase = 'Spreadsheet Database';
+  static const _spreadsheetNameTop109Stocks = 'Top 109 Stocks';
 
   final GSheets _gsheets = GSheets(_credentials);
 
@@ -64,18 +66,27 @@ class _shareListState extends State<shareList> {
   Future<void> _loadTableDataFromSpreadsheet() async {
     try {
       final spreadsheet = await _gsheets.spreadsheet(_spreadsheetId);
-      final sheet = spreadsheet.worksheetByTitle(_spreadsheetName);
 
-      if (sheet == null) {
-        print('Worksheet not found.');
-        return;
+      // Load data from 'Spreadsheet Database'
+      final sheetDatabase = spreadsheet.worksheetByTitle(_spreadsheetNameDatabase);
+      if (sheetDatabase != null) {
+        final data = await sheetDatabase.values.map.allRows();
+        if (data != null) {
+          setState(() {
+            _rows = data;
+          });
+        }
       }
 
-      final data = await sheet.values.map.allRows();
-      if (data != null) {
-        setState(() {
-          _rows = data;
-        });
+      // Load data from 'Top 109 Stocks'
+      final sheetTop109Stocks = spreadsheet.worksheetByTitle(_spreadsheetNameTop109Stocks);
+      if (sheetTop109Stocks != null) {
+        final dataTop109Stocks = await sheetTop109Stocks.values.map.allRows();
+        if (dataTop109Stocks != null) {
+          setState(() {
+            _top109Stocks = dataTop109Stocks;
+          });
+        }
       }
     } catch (e) {
       print('Error loading spreadsheet data: $e');
@@ -87,6 +98,14 @@ class _shareListState extends State<shareList> {
       return _rows;
     }
     return _rows.where((row) => row['List'] == _selectedFilter).toList();
+  }
+
+  // Function to find corresponding row from 'Top 109 Stocks' by NSECode
+  Map<String, String>? _findStockData(String nseCode) {
+    return _top109Stocks.firstWhere(
+          (row) => row['NSECode'] == nseCode,
+      orElse: () => {},
+    );
   }
 
   @override
@@ -101,9 +120,8 @@ class _shareListState extends State<shareList> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-
             height: 100,
-            child:  Row(
+            child: Row(
               children: documentNames.map((docName) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -115,7 +133,7 @@ class _shareListState extends State<shareList> {
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero, // Makes the corners square
+                        borderRadius: BorderRadius.zero,
                       ),
                       backgroundColor: _selectedFilter == docName
                           ? Colors.blueAccent
@@ -130,55 +148,78 @@ class _shareListState extends State<shareList> {
               }).toList(),
             ),
           ),
-
           Expanded(
             child: CrossScroll(
               child: Column(
                 children: [
                   _rows.isEmpty
-                      ?  Center(
-                    child: CircularProgressIndicator(),)
+                      ? Center(child: CircularProgressIndicator())
                       : DataTable(
                     columnSpacing: 7.0,
                     columns: _rows.isNotEmpty
                         ? _rows.first.keys
-                        .map((key) => DataColumn(label: Container( width:80, child: Text(key,overflow: TextOverflow.visible,
-                      softWrap: true,)),))
+                        .map((key) => DataColumn(
+                      label: Container(
+                        width: 80,
+                        child: Text(
+                          key,
+                          overflow: TextOverflow.visible,
+                          softWrap: true,
+                        ),
+                      ),
+                    ))
                         .toList()
                         : [],
                     rows: filteredRows.map((row) {
                       return DataRow(
                         onSelectChanged: (selected) {
                           if (selected == true) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LineChartScreen(
-                                  nseCode: row['NSECode'] ?? '',
-                                  dateValues: row.entries
-                                      .where((entry) => entry.key.contains('2024'))
-                                      .toList(),
+                            String nseCode = row['NSECode'] ?? '';
+                            Map<String, String>? stockData = _findStockData(nseCode);
+
+                            if (stockData != null && stockData.isNotEmpty) {
+                              print('Stock Data: $stockData');
+
+                              // Extract the DMA values and parse them to double
+                              double dma5 = double.tryParse(stockData['5 DMA'] ?? '') ?? 0.0;
+                              double dma20 = double.tryParse(stockData['20 DMA'] ?? '') ?? 0.0;
+                              double dma50 = double.tryParse(stockData['50 DMA'] ?? '') ?? 0.0;
+                              double dma100 = double.tryParse(stockData['100 DMA'] ?? '') ?? 0.0;
+                              double dma200 = double.tryParse(stockData['200 DMA'] ?? '') ?? 0.0;
+
+                              // Navigate to LineChartScreen with the required parameters
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LineChartScreen(
+                                    nseCode: nseCode,
+                                    dateValues: row.entries
+                                        .where((entry) => entry.key.contains('2024'))
+                                        .toList(),
+                                    dma5: dma5,
+                                    dma20: dma20,
+                                    dma50: dma50,
+                                    dma100: dma100,
+                                    dma200: dma200,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            } else {
+                              print('No data found for $nseCode');
+                            }
                           }
                         },
                         cells: row.values.map((value) => DataCell(Text(value))).toList(),
                       );
                     }).toList(),
                   ),
-
-
                 ],
               ),
             ),
           ),
           SizedBox(width: 16.0), // Adding some space between sections
-
         ],
       ),
-
-
     );
   }
 }
