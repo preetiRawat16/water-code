@@ -92,16 +92,16 @@ class _DataTableWidgetState extends State<DataTableWidget> {
           Text(value),
           onTap: () {
             final rowData = {
-              'sno': modifiedRow.length > 12 ? modifiedRow[12] : '',
+              'sno': modifiedRow.length > 13 ? modifiedRow[13] : '',
               'detail': modifiedRow.length > 0 ? modifiedRow[0] : '',
               'cap': modifiedRow.length > 1 ? modifiedRow[1] : '',
               'type': modifiedRow.length > 1 ? modifiedRow[1] : '',
               'category': modifiedRow.length > 2 ? modifiedRow[2] : '',
-              'rank': modifiedRow.length > 7 ? modifiedRow[7] : '',
-              '2021': modifiedRow.length > 8 ? modifiedRow[8] : '',
-              '2022': modifiedRow.length > 9 ? modifiedRow[9] : '',
-              '2023': modifiedRow.length > 10 ? modifiedRow[10] : '',
-              'list': modifiedRow.length > 11 ? modifiedRow[11] : '',
+              'rank': modifiedRow.length > 8 ? modifiedRow[8] : '',
+              '2021': modifiedRow.length > 9 ? modifiedRow[9] : '',
+              '2022': modifiedRow.length > 10 ? modifiedRow[10] : '',
+              '2023': modifiedRow.length > 11 ? modifiedRow[11] : '',
+              'list': modifiedRow.length > 12 ? modifiedRow[12] : '',
             };
             widget.onRowSelected(rowData);
           },

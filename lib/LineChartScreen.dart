@@ -28,10 +28,17 @@ class LineChartScreen extends StatelessWidget {
     for (var entry in dateValues) {
       double? yValue = double.tryParse(entry.value);
       if (yValue != null) {
-        // Use the index as the x-coordinate (days)
         spots.add(FlSpot(dateValues.indexOf(entry).toDouble(), yValue));
       }
     }
+
+    // Calculate min and max y values for vertical axis range
+    double minY = spots.isNotEmpty ? spots.map((spot) => spot.y).reduce((a, b) => a < b ? a : b) : 0;
+    double maxY = spots.isNotEmpty ? spots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) : 0;
+
+    // Extend the range by 20 units
+    minY -= 20;
+    maxY += 20;
 
     return Scaffold(
       appBar: AppBar(
@@ -41,14 +48,15 @@ class LineChartScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: LineChart(
           LineChartData(
+            minY: minY,
+            maxY: maxY,
             gridData: FlGridData(show: true),
             titlesData: FlTitlesData(
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  reservedSize: 50, // Create enough space for labels
+                  reservedSize: 50,
                   getTitlesWidget: (value, meta) {
-                    // Dynamic interval: Show labels that make sense for the data range
                     if (value % 5 == 0) {
                       return Text(
                         value.toInt().toString(),
@@ -65,10 +73,9 @@ class LineChartScreen extends StatelessWidget {
                   showTitles: true,
                   getTitlesWidget: (value, meta) {
                     int index = value.toInt();
-                    // Display title only for indices divisible by 7
                     if (index % 7 == 0 && index >= 0 && index < dateValues.length) {
                       return Text(
-                        dateValues[index].key.split(' ')[0], // Show only the date
+                        dateValues[index].key.split(' ')[0],
                         style: TextStyle(fontSize: 10),
                       );
                     }
@@ -77,44 +84,19 @@ class LineChartScreen extends StatelessWidget {
                 ),
               ),
               rightTitles: AxisTitles(
-                sideTitles: SideTitles(showTitles: false), // Disable right axis titles
+                sideTitles: SideTitles(showTitles: false),
               ),
               topTitles: AxisTitles(
-                sideTitles: SideTitles(showTitles: false), // Disable top axis titles
+                sideTitles: SideTitles(showTitles: false),
               ),
             ),
             extraLinesData: ExtraLinesData(
               horizontalLines: [
-                HorizontalLine(
-                  y: dma5,
-                  color: Colors.red, // Color for the 5 DMA line
-                  strokeWidth: 2,
-                  dashArray: [5, 5], // Dotted line
-                ),
-                HorizontalLine(
-                  y: dma20,
-                  color: Colors.green, // Color for the 20 DMA line
-                  strokeWidth: 2,
-                  dashArray: [5, 5], // Dotted line
-                ),
-                HorizontalLine(
-                  y: dma50,
-                  color: Colors.blue, // Color for the 50 DMA line
-                  strokeWidth: 2,
-                  dashArray: [5, 5], // Dotted line
-                ),
-                HorizontalLine(
-                  y: dma100,
-                  color: Colors.orange, // Color for the 100 DMA line
-                  strokeWidth: 2,
-                  dashArray: [5, 5], // Dotted line
-                ),
-                HorizontalLine(
-                  y: dma200,
-                  color: Colors.purple, // Color for the 200 DMA line
-                  strokeWidth: 2,
-                  dashArray: [5, 5], // Dotted line
-                ),
+                HorizontalLine(y: dma5, color: Colors.green, strokeWidth: 2, dashArray: [5, 5]),
+                HorizontalLine(y: dma20, color: Colors.blue, strokeWidth: 2, dashArray: [5, 5]),
+                HorizontalLine(y: dma50, color: Colors.yellow, strokeWidth: 2, dashArray: [5, 5]),
+                HorizontalLine(y: dma100, color: Colors.purple, strokeWidth: 2, dashArray: [5, 5]),
+                HorizontalLine(y: dma200, color: Colors.red, strokeWidth: 2, dashArray: [5, 5]),
               ],
             ),
             lineBarsData: [
@@ -131,4 +113,6 @@ class LineChartScreen extends StatelessWidget {
       ),
     );
   }
-}
+} 
+
+

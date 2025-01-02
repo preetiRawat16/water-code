@@ -1005,6 +1005,7 @@ class _NewShareDetailState extends State<NewShareDetail> {
       await _fetchStockCodesAndPrices();
       await updateSharePricePercentageChange();
       await calculateAndSavePercentageDifference();
+      await updateMaxMinForDecember();
       setState(() {
         _marketCapData = _fetchMarketCapData();
       });
@@ -1160,7 +1161,6 @@ class _NewShareDetailState extends State<NewShareDetail> {
                                       ),
                                     ),
                                   ),
-                                  // _buildTextFieldRow("Share Details", _detailsController),
                                   _buildTextFieldRow("CMP", _capController),
 
                                   Row(
@@ -1330,20 +1330,20 @@ class _NewShareDetailState extends State<NewShareDetail> {
                                         calculateProfitINR();
                                       },
                                       ),
-                                      ElevatedButton(
-                                        child: Text(
-                                          'update Max-Min',
-                                          style: TextStyle(
-                                            color: Color(0xFFa46e2d), // Text color
-                                          ),
-                                        ),
-                                        style: ButtonStyle(
-                                          backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFf6ee9c)), // Background color
-                                        ),  onPressed: () {
-                                        // updateMaxMinForDecember();
-                                        calculateAndSavePercentageDifference();
-                                      },
-                                      ),
+                                      // ElevatedButton(
+                                      //   child: Text(
+                                      //     'update Max-Min',
+                                      //     style: TextStyle(
+                                      //       color: Color(0xFFa46e2d), // Text color
+                                      //     ),
+                                      //   ),
+                                      //   style: ButtonStyle(
+                                      //     backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFf6ee9c)), // Background color
+                                      //   ),  onPressed: () {
+                                      //    updateMaxMinForDecember();
+                                      //   //calculateAndSavePercentageDifference();
+                                      // },
+                                      // ),
 
                                       ElevatedButton(
                                         child: _isLoading
@@ -1371,6 +1371,8 @@ class _NewShareDetailState extends State<NewShareDetail> {
                                           } finally {
                                             setState(() {
                                               _isLoading = false;
+                                              var j= "hello";
+
                                             });
                                           }
                                         },
