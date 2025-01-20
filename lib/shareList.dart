@@ -163,6 +163,7 @@ class _shareListState extends State<shareList> {
                         width: 80,
                         child: Text(
                           key,
+
                           overflow: TextOverflow.visible,
                           softWrap: true,
                         ),

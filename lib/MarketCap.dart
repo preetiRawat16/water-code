@@ -214,8 +214,7 @@ void _saveData(BuildContext context) {
     ),
   ),
                           style: ButtonStyle(
-    backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFf6ee9c)), // Background color
-  ),
+    backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFf6ee9c)), ),
                         ),
                       ],
                     ),

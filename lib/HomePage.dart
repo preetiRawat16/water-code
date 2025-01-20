@@ -4,6 +4,7 @@ import 'package:stock_market/watchlist.dart';
 import 'MarketCap.dart';
 import 'MarketCategory.dart';
 import 'MarketType.dart';
+import 'RsiPage.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key, required this.title, required this.suggestionlist}) : super(key: key);
@@ -112,7 +113,7 @@ class MyHomePage extends StatelessWidget {
                             MarketCap(),
                             AddDocumentScreen(),
                             shareTypePage(),
-                            watchList(),
+                            Rsipage(),
 
                             Center(
                               child: Text('Tab Content'),

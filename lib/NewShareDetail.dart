@@ -755,7 +755,7 @@ class _NewShareDetailState extends State<NewShareDetail> {
       try {
         // Parse the date in the header
         final headerDate = dateFormat.parse(headers[i].split(' ')[0]); // Extract date portion
-        if (headerDate.month == 12) {
+        if (headerDate.month == 1) {
           decemberColumns.add(i);
         }
       } catch (e) {
@@ -834,7 +834,7 @@ class _NewShareDetailState extends State<NewShareDetail> {
     final dateFormat = DateFormat("yyyy-MM-dd");
 
     // Get the date for 1st December 2024 and today's date in the required format
-    final dateDec1st = dateFormat.parse("2024-12-01");
+    final dateDec1st = dateFormat.parse("2025-01-01");
     final dateToday = DateTime.now();
 
     // Find the columns corresponding to "Share Price 1st December" and "Share Price Today"
@@ -904,6 +904,7 @@ class _NewShareDetailState extends State<NewShareDetail> {
     }
   }
   void _validateAndUpdate() {
+
     // Parse inputs or treat empty fields as valid
     final profit2021 = _profit2021Controller.text.isEmpty
         ? null
